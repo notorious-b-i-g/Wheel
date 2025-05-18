@@ -1,0 +1,41 @@
+<!-- wheel_of_fortune/templates/wheel_of_fortune/history.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>История Вращений</title>
+    <link rel="stylesheet" href="{% static 'wheel_of_fortune/css/styles.css' %}">
+</head>
+<body>
+    <h2>История Ваших Вращений</h2>
+    {% if user.is_authenticated %}
+        {% if spins %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Выпавший приз</th>
+                        <th>Источник</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for spin in spins %}
+                        <tr>
+                            <td>{{ spin.timestamp }}</td>
+                            <td>{{ spin.prize.name }}</td>
+                            <td>{{ spin.get_source_display }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>У вас еще нет вращений.</p>
+        {% endif %}
+    {% else %}
+        <p>Пожалуйста, <a href="{% url 'admin:login' %}">войдите</a>, чтобы просмотреть историю.</p>
+    {% endif %}
+    <a href="{% url 'wheel_of_fortune:main' %}">Назад на главную</a>
+</body>
+</html>

@@ -1,0 +1,120 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Колесо Фортуны</title>
+    <link rel="stylesheet" href="{% static 'wheel_of_fortune/css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body style="overflow: hidden">
+
+    <div id="preloader"
+         style="background: #781f19; position: absolute; width: 100vw; height: 100vh; z-index: 9999;">
+    </div>
+
+    <div class="video-background">
+        <img src="{% static 'wheel_of_fortune/images/bg.gif' %}" class="video-ril">
+    </div>
+
+    <div class="wheel-div">
+        <h1 class="title">Wheel of Fortune</h1>
+
+        <!-- Колесо + данные для CSRF -->
+        <div class="wheel-container" data-csrf="{{ csrf_token }}">
+            <canvas id="wheelCanvas" width="500" height="500"></canvas>
+            <div class="axis">
+                <img src="{% static 'wheel_of_fortune/images/axis.png' %}" alt="Ось">
+            </div>
+            <div class="rim">
+                <img src="{% static 'wheel_of_fortune/images/rim.png' %}" class="wheel_ring" alt="Ободок колеса">
+            </div>
+            <div class="lights-container" id="lightsContainer">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp1" alt="Лампочка 1">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp2" alt="Лампочка 2">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp3" alt="Лампочка 3">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp4" alt="Лампочка 4">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp5" alt="Лампочка 5">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp6" alt="Лампочка 6">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp7" alt="Лампочка 7">
+                <img src="{% static 'wheel_of_fortune/images/light.png' %}" class="light-bulb" id="lamp8" alt="Лампочка 8">
+            </div>
+        </div>
+
+        <!-- Кнопки: вращать, приглашение, ввод реферала, выключение/включение звука -->
+        <div class="buttons">
+            <img src="{% static 'wheel_of_fortune/images/invite_friend.svg' %}"
+                 class="invite_friend_button"
+                 id="invite_friend_button">
+
+            <img src="{% static 'wheel_of_fortune/images/input_refer.svg' %}"
+                 class="input_refer_button hidden"
+                 id="input_refer_button">
+
+            <button id="spinButton">Вращать</button>
+
+            <img id="soundToggleIcon" src="{% static 'wheel_of_fortune/images/unmute_icon.svg' %}" class="mute-button">
+        </div>
+
+        <div id="spinsAvailable">
+            Доступные вращения:
+            {% if user_profile %}{{ user_profile.available_spins }}{% else %}0{% endif %}
+        </div>
+
+        <div id="noSpinsDiv" class="info_background_div hidden">
+            <img id="close_no_spins_button" class="close_button" src="{% static 'wheel_of_fortune/images/cross.svg' %}">
+            <p id="noSpinsMessage" class="inbox_text">У вас нет доступных вращений</p>
+        </div>
+
+        <div id="prizeWonDiv" class="info_background_div hidden">
+            <img id="close_prize_won_button" class="close_button"
+                 src="{% static 'wheel_of_fortune/images/cross.svg' %}">
+
+            <!-- Картинка приза -->
+            <img id="prize_win_image" class="prize_win_image" alt="Выигрыш" style="display: none;">
+
+            <p id="prizeWonDescription" class="inbox_text"></p>
+
+            <button class="confirm_button hidden"
+                    id="write_to_admin_button"
+                    onclick="window.location.href='{{ moderator_tg }}';">
+                Написать →
+            </button>
+        </div>
+
+        <div class="info_background_div hidden" id="invite_friend_div">
+            <img class="close_button" id="close_invite_friend_button"
+                 src="{% static 'wheel_of_fortune/images/cross.svg' %}" alt="Закрыть">
+            <div class="border-text">
+                <p class="inbox_text" id="copy_refer_link_text">
+                    Пригласите друзей и получите вращения!
+                </p>
+            </div>
+            <button class="confirm_button"
+                    id="copy_refer_link_button"
+                    data-copy-value="https://t.me/gaz_preprod_bot/?start={{ user_profile.referral_code }}">
+                Скопировать
+            </button>
+        </div>
+
+        <div class="info_background_div hidden" id="input_refer_div">
+            <img class="close_button" id="close_input_refer_button"
+                 src="{% static 'wheel_of_fortune/images/cross.svg' %}" alt="Закрыть">
+            <div class="border-text">
+                <p class="inbox_text" id="input_refer_link_text">
+                    Введите телеграм пригласившего и получите бонус
+                </p>
+            </div>
+            <input class="input_refer" id="input_refer" placeholder="Телеграм">
+            <button class="confirm_button" id="send_refer_code_button">Отправить</button>
+        </div>
+    </div>
+
+    <audio id="spinSound" src="{% static 'wheel_of_fortune/sounds/spin.mp3' %}" preload="auto"></audio>
+    <audio id="winSound" src="{% static 'wheel_of_fortune/sounds/win.mp3' %}" preload="auto"></audio>
+
+    <div id="prizes-data" style="display: none;">
+        {{ prizes_json|safe }}
+    </div>
+    <script src="{% static 'wheel_of_fortune/js/wheel.js' %}"></script>
+</body>
+</html>
