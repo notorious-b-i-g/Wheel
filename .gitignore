@@ -1,0 +1,23 @@
+# Секреты и окружение
+.env
+*.key
+*.crt
+*.csr
+*.pem
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+staticfiles/
+
+# Node
+node_modules/
+
+# Архивы — не храним в репозитории
+*.zip
+
+# IDE
+.idea/
+.vscode/
